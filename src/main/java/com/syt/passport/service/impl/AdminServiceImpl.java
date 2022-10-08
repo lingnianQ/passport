@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * @author sytsnb@gmail.com
@@ -24,6 +25,19 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public void addNew(AdminAddNewDTO adminAddNewDTO) {
+        System.out.println("adminAddNewDTO = " + adminAddNewDTO);
+
+        if (!StringUtils.hasText(StringUtils.trimWhitespace(adminAddNewDTO.getUsername()))) {
+            String message = "用户名不能为空";
+            log.info(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
+        }
+        if (StringUtils.containsWhitespace(adminAddNewDTO.getUsername())) {
+            String message = "用户名不能包含空白字符";
+            log.info(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
+        }
+
         if (adminMapper.countByUsername(adminAddNewDTO.getUsername()) != 0) {
             String message = "用户已存在";
             log.info(message);

@@ -3,6 +3,7 @@ package com.syt.passport.ex.handler;
 import com.syt.passport.ex.ServiceException;
 import com.syt.passport.web.JsonResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,6 +21,19 @@ public class GlobalExceptionHandler {
         return JsonResult.fail(e);
     }
 
+
+    @ExceptionHandler
+    public JsonResult<Void> handlerHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+
+        log.debug("处理HttpRequestMethodNotSupportedException");
+//        e.printStackTrace();//dev
+
+        Integer serviceCode = 7777;
+        String message = "请求方式错误,请联系管理员";
+        log.info(message);
+        return JsonResult.fail(serviceCode, message);
+
+    }
 
     @ExceptionHandler
     public JsonResult<Void> handlerThrowable(Throwable e) {

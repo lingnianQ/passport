@@ -1,3 +1,5 @@
+server:
+  port: 8081
 # 连接数据库的配置
 spring:
   datasource:
@@ -11,5 +13,3 @@ logging:
     com.syt.product: trace
   file:
     name: log/my.log
-server:
-  port: 8081
