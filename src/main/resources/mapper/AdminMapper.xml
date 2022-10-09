@@ -15,6 +15,15 @@
                 #{lastLoginIp}, #{loginCount})
     </insert>
 
+
+    <!--    * 通过id删除-->
+    <!--    int deleteById(Long id);-->
+    <delete id="deleteById">
+        DELETE
+        FROM ams_admin
+        WHERE id = #{id}
+    </delete>
+
     <!--    int countByName(String name);-->
     <select id="countByUsername" resultType="int">
         select COUNT(*)
@@ -28,4 +37,42 @@
         FROM ams_admin
         WHERE phone = #{phone}
     </select>
+
+
+    <!--    * 获取管理员数据-->
+    <!--    AdminStandardVO getStandardById(Long id);-->
+    <select id="getStandardById" resultType="AdminStandardVO">
+        SELECT id,
+               username,
+               password,
+               nickname,
+               avatar,
+               phone,
+               email,
+               description,
+               enable,
+               last_login_ip,
+               login_count
+        FROM ams_admin
+        WHERE id = #{id}
+    </select>
+
+    <!--    * 查询管理员列表-->
+    <!--    List<AdminListItemVO> list();-->
+    <select id="list" resultType="AdminListItemVO">
+        SELECT id,
+               username,
+               password,
+               nickname,
+               avatar,
+               phone,
+               email,
+               description,
+               enable,
+               last_login_ip,
+               login_count
+        FROM ams_admin
+        ORDER BY enable desc, id
+    </select>
+
 </mapper>

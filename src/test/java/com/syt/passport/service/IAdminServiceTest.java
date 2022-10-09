@@ -29,4 +29,14 @@ class IAdminServiceTest {
                 .build();
         adminService.addNew(adminAddNewDTO);
     }
+
+    @Test
+    void testList() {
+        adminService.list().forEach(System.out::println);
+    }
+
+    @Test
+    void deleteById() {
+        adminService.deleteById(35L);
+    }
 }

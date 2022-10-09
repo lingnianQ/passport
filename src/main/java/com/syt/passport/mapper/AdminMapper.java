@@ -1,6 +1,10 @@
 package com.syt.passport.mapper;
 
 import com.syt.passport.pojo.entity.Admin;
+import com.syt.passport.pojo.vo.AdminListItemVO;
+import com.syt.passport.pojo.vo.AdminStandardVO;
+
+import java.util.List;
 
 /**
  * @author sytsnb@gmail.com
@@ -14,6 +18,14 @@ public interface AdminMapper {
      * @return
      */
     int insert(Admin admin);
+
+    /**
+     * 通过id删除
+     *
+     * @param id 管理员id
+     * @return 影响的行数
+     */
+    int deleteById(Long id);
 
     /**
      * 通过用户名查找
@@ -30,4 +42,19 @@ public interface AdminMapper {
      * @return
      */
     int countByPhone(String phone);
+
+    /**
+     * 获取管理员数据
+     *
+     * @param id
+     * @return AdminStandardVO
+     */
+    AdminStandardVO getStandardById(Long id);
+
+    /**
+     * 查询管理员列表
+     *
+     * @return List<AdminListItemVO>
+     */
+    List<AdminListItemVO> list();
 }
