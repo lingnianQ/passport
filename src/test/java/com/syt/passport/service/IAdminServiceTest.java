@@ -1,6 +1,7 @@
 package com.syt.passport.service;
 
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
+import com.syt.passport.pojo.entity.AdminRole;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,12 @@ class IAdminServiceTest {
 
     @Test
     void testAddNew() {
+        Long[] roleIds = {12L, 54L, 44L};
         AdminAddNewDTO adminAddNewDTO = AdminAddNewDTO.builder()
                 .username("Q.1")
                 .phone("16605523666")
+                .email("1232@qq.com")
+                .roleIds(roleIds)
                 .build();
         adminService.addNew(adminAddNewDTO);
     }

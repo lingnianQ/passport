@@ -44,6 +44,14 @@ public interface AdminMapper {
     int countByPhone(String phone);
 
     /**
+     * 通过用户名查找
+     *
+     * @param email
+     * @return int
+     */
+    int countByEmail(String email);
+
+    /**
      * 获取管理员数据
      *
      * @param id

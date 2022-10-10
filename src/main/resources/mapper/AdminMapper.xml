@@ -31,6 +31,13 @@
         WHERE username = #{username}
     </select>
 
+    <!--    int countByEmail(String name);-->
+    <select id="countByEmail" resultType="int">
+        select COUNT(*)
+        FROM ams_admin
+        WHERE email = #{email}
+    </select>
+
     <!--    int countByPhone(String name);-->
     <select id="countByPhone" resultType="int">
         select COUNT(*)

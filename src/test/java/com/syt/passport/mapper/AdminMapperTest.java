@@ -27,7 +27,7 @@ class AdminMapperTest {
                 .nickname("ling")
                 .avatar("qwe")
                 .phone("16605523478")
-                .email("sytsnb@gmail.om")
+                .email("sytsnb@gmail.com")
                 .description("测试账号")
                 .enable(1)
                 .lastLoginIp("杭州")
@@ -47,5 +47,11 @@ class AdminMapperTest {
     void testCountByPhone() {
         int countByPhone = adminMapper.countByPhone("16605523478");
         System.out.println("countByPhone = " + countByPhone);
+    }
+
+    @Test
+    void testCountByEmail() {
+        int countByEmail = adminMapper.countByEmail("sytsnb@gmail.com");
+        System.out.println("countByEmail = " + countByEmail);
     }
 }

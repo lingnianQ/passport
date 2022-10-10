@@ -2,8 +2,10 @@ package com.syt.passport.service.impl;
 
 import com.syt.passport.ex.ServiceException;
 import com.syt.passport.mapper.AdminMapper;
+import com.syt.passport.mapper.AdminRoleMapper;
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
 import com.syt.passport.pojo.entity.Admin;
+import com.syt.passport.pojo.entity.AdminRole;
 import com.syt.passport.pojo.vo.AdminListItemVO;
 import com.syt.passport.pojo.vo.AdminStandardVO;
 import com.syt.passport.service.IAdminService;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +29,10 @@ public class AdminServiceImpl implements IAdminService {
 
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private AdminRoleMapper adminRoleMapper;
+
 
     @Override
     public void addNew(AdminAddNewDTO adminAddNewDTO) {
@@ -41,23 +48,49 @@ public class AdminServiceImpl implements IAdminService {
             log.info(message);
             throw new ServiceException(ServiceCode.ERR_INSERT, message);
         }
-
+        //------------------------------------------------------------
+        log.debug("即将检查用户名是否被占用……");
         if (adminMapper.countByUsername(adminAddNewDTO.getUsername()) != 0) {
             String message = "用户已存在";
             log.info(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
         }
 
+        log.debug("即将检查手机号码是否被占用……");
         if (adminMapper.countByPhone(adminAddNewDTO.getPhone()) != 0) {
             String message = "该手机号已经被注册";
             log.info(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
         }
+
+        log.debug("即将检查电子邮箱是否被占用……");
+        if (adminMapper.countByEmail(adminAddNewDTO.getEmail()) != 0) {
+            String message = "该电子邮箱已经被注册";
+            log.info(message);
+            throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
+        }
+
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminAddNewDTO, admin);
+        admin.setLoginCount(0);
         log.info("开始插入用户");
         adminMapper.insert(admin);
         log.info("用户插入成功");
+
+        log.debug("开始插入角色");
+// 调用adminRoleMapper的insertBatch()方法插入关联数据
+        Long[] roleIds = adminAddNewDTO.getRoleIds();
+        List<AdminRole> adminRoleList = new ArrayList<>();
+        for (int i = 0; i < roleIds.length; i++) {
+            AdminRole adminRole = new AdminRole();
+            adminRole.setAdminId(admin.getId());
+            adminRole.setRoleId(roleIds[i]);
+            adminRoleList.add(adminRole);
+        }
+        adminRoleMapper.insertBatch(adminRoleList);
+        log.debug("管理员角色插入成功");
+
+
     }
 
     @Override
