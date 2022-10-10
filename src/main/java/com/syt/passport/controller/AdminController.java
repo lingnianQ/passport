@@ -48,7 +48,7 @@ public class AdminController {
         return JsonResult.ok(message);
     }
 
-    @PostMapping("")
+    @GetMapping("")
     public JsonResult<List<AdminListItemVO>> select() {
         String message = "开始查询管理员列表";
         log.debug(message);
