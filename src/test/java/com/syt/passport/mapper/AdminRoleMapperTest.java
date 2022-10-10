@@ -36,4 +36,6 @@ class AdminRoleMapperTest {
         int rows = adminRoleMapper.insertBatch(adminRoleList);
         log.debug("rows = {}", rows);
     }
+
+
 }

@@ -13,4 +13,13 @@
             (#{adminRole.adminId},#{adminRole.roleId})
         </foreach>
     </insert>
+
+
+    <!--    * 根据管理员id删除管理员与角色的关联数据-->
+    <!--    int deleteByAdminId(Long adminId);-->
+    <delete id="deleteByAdminId">
+        DELETE
+        FROM ams_admin_role
+        WHERE admin_id = #{adminId}
+    </delete>
 </mapper>

@@ -52,34 +52,46 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("即将检查用户名是否被占用……");
         if (adminMapper.countByUsername(adminAddNewDTO.getUsername()) != 0) {
             String message = "用户已存在";
-            log.info(message);
+            log.debug(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
         }
 
         log.debug("即将检查手机号码是否被占用……");
         if (adminMapper.countByPhone(adminAddNewDTO.getPhone()) != 0) {
             String message = "该手机号已经被注册";
-            log.info(message);
+            log.debug(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
         }
 
         log.debug("即将检查电子邮箱是否被占用……");
         if (adminMapper.countByEmail(adminAddNewDTO.getEmail()) != 0) {
             String message = "该电子邮箱已经被注册";
-            log.info(message);
+            log.debug(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
         }
 
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminAddNewDTO, admin);
+        // TODO 从Admin对象中取出密码，进行加密处理，并将密文封装回Admin对象中
         admin.setLoginCount(0);
-        log.info("开始插入用户");
-        adminMapper.insert(admin);
-        log.info("用户插入成功");
+        log.debug("开始插入管理员: {}", admin);
+        int rows = adminMapper.insert(admin);
+        if (rows != 1) {
+            String message = "添加管理员失败，服务器忙，请稍后再次尝试！ addNew-1";
+            log.warn(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
+        }
+        log.debug("管理员插入成功");
 
         log.debug("开始插入角色");
-// 调用adminRoleMapper的insertBatch()方法插入关联数据
+        // 调用adminRoleMapper的insertBatch()方法插入关联数据
         Long[] roleIds = adminAddNewDTO.getRoleIds();
+        if (roleIds.length < 1) {
+            String message = "角色id不存在--addNew";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
+        }
+
         List<AdminRole> adminRoleList = new ArrayList<>();
         for (int i = 0; i < roleIds.length; i++) {
             AdminRole adminRole = new AdminRole();
@@ -87,10 +99,13 @@ public class AdminServiceImpl implements IAdminService {
             adminRole.setRoleId(roleIds[i]);
             adminRoleList.add(adminRole);
         }
-        adminRoleMapper.insertBatch(adminRoleList);
+        rows = adminRoleMapper.insertBatch(adminRoleList);
+        if (rows != roleIds.length) {
+            String message = "添加管理员失败，服务器忙，请稍后再次尝试！ addNew-2";
+            log.warn(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
+        }
         log.debug("管理员角色插入成功");
-
-
     }
 
     @Override
@@ -104,12 +119,65 @@ public class AdminServiceImpl implements IAdminService {
             throw new ServiceException(ServiceCode.ERR_DELETE, message);
         }
         log.debug("开始删除管理员数据: {}", id);
-        adminMapper.deleteById(id);
+        int rows = adminMapper.deleteById(id);
+        if (rows != 1) {
+            String message = "删除管理员失败，服务器忙，请稍后再次尝试！-1";
+            log.warn(message);
+            throw new ServiceException(ServiceCode.ERR_DELETE, message);
+        }
+
+        rows = adminRoleMapper.deleteByAdminId(id);
+        if (rows < 1) {
+            String message = "删除管理员失败，服务器忙，请稍后再次尝试！-2";
+            log.warn(message);
+            throw new ServiceException(ServiceCode.ERR_DELETE, message);
+        }
         log.debug("删除管理员成功");
     }
 
     @Override
+    public void setEnable(Long id) {
+        updateEnableById(id, 1);
+    }
+
+    @Override
+    public void setDisable(Long id) {
+        updateEnableById(id, 0);
+    }
+
+    @Override
     public List<AdminListItemVO> list() {
+        log.debug("开始处理【查询管理员列表】的业务");
         return adminMapper.list();
+    }
+
+    private void updateEnableById(Long id, Integer enable) {
+        String[] tips = {"禁用", "启用"};
+        log.debug("开始处理【{}管理员】的业务，参数：{}", tips[enable], id);
+        // 检查尝试访问的数据是否存在
+        AdminStandardVO queryResult = adminMapper.getStandardById(id);
+        if (queryResult == null) {
+            String message = tips[enable] + "管理员失败，尝试访问的数据不存在！";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_NOT_FOUND, message);
+        }
+
+        // 判断状态是否冲突（当前已经是目标状态）
+        if (queryResult.getEnable().equals(enable)) {
+            String message = tips[enable] + "管理员失败，管理员账号已经处于" + tips[enable] + "状态！";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_CONFLICT, message);
+        }
+
+        // 准备执行更新
+        Admin admin = new Admin();
+        admin.setId(id);
+        admin.setEnable(enable);
+        int rows = adminMapper.updateById(admin);
+        if (rows != 1) {
+            String message = tips[enable] + "管理员失败，服务器忙，请稍后再次尝试！";
+            log.warn(message);
+            throw new ServiceException(ServiceCode.ERR_UPDATE, message);
+        }
     }
 }

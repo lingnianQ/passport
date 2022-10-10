@@ -10,6 +10,6 @@ spring:
 # 日志的显示级别
 logging:
   level:
-    com.syt.product: debug
+    com.syt.passport: trace
   file:
     name: log/my.log

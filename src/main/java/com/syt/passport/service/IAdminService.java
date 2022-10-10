@@ -2,13 +2,17 @@ package com.syt.passport.service;
 
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
 import com.syt.passport.pojo.vo.AdminListItemVO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
+ * 管理员数据业务接口
+ *
  * @author sytsnb@gmail.com
  * @date 2022 2022/9/29 10:30
  */
+@Transactional
 public interface IAdminService {
     /**
      * 添加新用户
@@ -23,6 +27,20 @@ public interface IAdminService {
      * @param id 管理员id
      */
     void deleteById(Long id);
+
+    /**
+     * 启用管理员
+     *
+     * @param id 管理员的id
+     */
+    void setEnable(Long id);
+
+    /**
+     * 禁用管理员
+     *
+     * @param id 管理员的id
+     */
+    void setDisable(Long id);
 
     /**
      * 查询管理员列表
