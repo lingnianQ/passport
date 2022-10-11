@@ -36,7 +36,7 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private AdminRoleMapper adminRoleMapper;
 
-//    @Autowired
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
