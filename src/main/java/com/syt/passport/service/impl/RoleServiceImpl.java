@@ -7,11 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * 处理角色数据的业务实现类
- *
  * @author sytsnb@gmail.com
  * @date 2022 2022/10/10 23:02
  */
@@ -28,6 +28,15 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public List<RoleListItemVO> list() {
-        return roleMapper.list();
+        List<RoleListItemVO> roleList = roleMapper.list();
+        Iterator<RoleListItemVO> iterator = roleList.iterator();
+        while (iterator.hasNext()) {
+            RoleListItemVO item = iterator.next();
+            if (item.getId() == 1) {
+                iterator.remove();
+                break;
+            }
+        }
+        return roleList;
     }
 }

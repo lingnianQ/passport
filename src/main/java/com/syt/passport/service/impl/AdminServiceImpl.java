@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,6 +38,15 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public void addNew(AdminAddNewDTO adminAddNewDTO) {
         System.out.println("adminAddNewDTO = " + adminAddNewDTO);
+        // 调用adminRoleMapper的insertBatch()方法插入关联数据
+        Long[] roleIds = adminAddNewDTO.getRoleIds();
+        for (Long roleId : roleIds) {
+            if (roleId == 1) {
+                String message = "添加失败,非法访问";
+                log.debug(message);
+                throw new ServiceException(ServiceCode.ERR_INSERT, message);
+            }
+        }
 
         if (!StringUtils.hasText(StringUtils.trimWhitespace(adminAddNewDTO.getUsername()))) {
             String message = "用户名不能为空";
@@ -84,8 +94,7 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("管理员插入成功");
 
         log.debug("开始插入角色");
-        // 调用adminRoleMapper的insertBatch()方法插入关联数据
-        Long[] roleIds = adminAddNewDTO.getRoleIds();
+
         if (roleIds.length < 1) {
             String message = "角色id不存在--addNew";
             log.debug(message);
@@ -110,6 +119,11 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public void deleteById(Long id) {
+        if (id == 1) {
+            String message = "删除失败,用户id不存在";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_DELETE, message);
+        }
         log.debug("开始删除管理员数据: {}", id);
         AdminStandardVO adminStandardVO = adminMapper.getStandardById(id);
 
@@ -148,22 +162,36 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public List<AdminListItemVO> list() {
         log.debug("开始处理【查询管理员列表】的业务");
-        return adminMapper.list();
+        List<AdminListItemVO> adminList = adminMapper.list();
+        Iterator<AdminListItemVO> iterator = adminList.iterator();
+        while (iterator.hasNext()) {
+            AdminListItemVO item = iterator.next();
+            if (item.getId() == 1) {
+                iterator.remove();
+                break;
+            }
+        }
+        return adminList;
     }
 
     private void updateEnableById(Long id, Integer enable) {
+        if (id == 1) {
+            String message = "用户id不存在";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_UPDATE, message);
+        }
         String[] tips = {"禁用", "启用"};
         log.debug("开始处理【{}管理员】的业务，参数：{}", tips[enable], id);
         // 检查尝试访问的数据是否存在
-        AdminStandardVO queryResult = adminMapper.getStandardById(id);
-        if (queryResult == null) {
+        AdminStandardVO adminStandardVO = adminMapper.getStandardById(id);
+        if (adminStandardVO == null) {
             String message = tips[enable] + "管理员失败，尝试访问的数据不存在！";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERR_NOT_FOUND, message);
         }
 
         // 判断状态是否冲突（当前已经是目标状态）
-        if (queryResult.getEnable().equals(enable)) {
+        if (adminStandardVO.getEnable().equals(enable)) {
             String message = tips[enable] + "管理员失败，管理员账号已经处于" + tips[enable] + "状态！";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERR_CONFLICT, message);

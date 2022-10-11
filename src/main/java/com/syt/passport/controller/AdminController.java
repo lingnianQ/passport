@@ -48,8 +48,30 @@ public class AdminController {
         return JsonResult.ok(message);
     }
 
-    @ApiOperation("查询管理员列表")
+    @ApiOperation("启用管理员")
     @ApiOperationSupport(order = 3)
+    @GetMapping("/{id:[0-9]+}/enable")
+    public JsonResult<Void> setEnable(@PathVariable Long id) {
+        log.debug("开始处理setEnable: {}", id);
+        adminService.setEnable(id);
+        String message = "setEnable管理员成功";
+        log.debug(message);
+        return JsonResult.ok(message);
+    }
+
+    @ApiOperation("禁用管理员")
+    @ApiOperationSupport(order = 4)
+    @GetMapping("/{id:[0-9]+}/disable")
+    public JsonResult<Void> setDisable(@PathVariable Long id) {
+        log.debug("开始处理setDisable: {}", id);
+        adminService.setDisable(id);
+        String message = "setDisable管理员成功";
+        log.debug(message);
+        return JsonResult.ok(message);
+    }
+
+    @ApiOperation("查询管理员列表")
+    @ApiOperationSupport(order = 5)
 //    @GetMapping("")
     @PostMapping("")
     public JsonResult<List<AdminListItemVO>> list() {
