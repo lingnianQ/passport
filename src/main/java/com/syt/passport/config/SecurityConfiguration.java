@@ -35,15 +35,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/**/*.js",
                 "/**/*.css",
                 "/swagger-resources",
-                "/v2/api-docs"
+                "/v2/api-docs",
+                "/favicon.ico",
         };
+
+        http.csrf().disable(); //CSRF防止伪造跨域攻击
 
         http.authorizeRequests() // 对请求执行认证与授权
                 .antMatchers(urls) // 匹配某些请求路径
                 .permitAll() // （对此前匹配的请求路径）不需要通过认证即允许访问
                 .anyRequest() // 除以上配置过的请求路径以外的所有请求路径
                 .authenticated(); // 要求是已经通过认证的
-//        http.formLogin();//开启表单验证,未认证时,重定向到登录表单
+
+        http.formLogin();//开启表单验证,未认证时,重定向到登录表单
 
     }
 }
