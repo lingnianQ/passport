@@ -50,7 +50,7 @@ public class AdminController {
 
     @ApiOperation("查询管理员列表")
     @ApiOperationSupport(order = 3)
-    @GetMapping("")
+//    @GetMapping("")
     @PostMapping("")
     public JsonResult<List<AdminListItemVO>> list() {
         String message = "开始查询管理员列表";
