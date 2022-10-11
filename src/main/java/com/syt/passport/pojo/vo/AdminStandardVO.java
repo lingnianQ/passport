@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author sytsnb@gmail.com
  * @date 2022 2022/9/29 10:36
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminStandardVO {
+public class AdminStandardVO implements Serializable {
     private Long id;
     private String username;
     private String password;

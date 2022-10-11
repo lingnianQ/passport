@@ -20,12 +20,20 @@ public interface AdminMapper {
     int insert(Admin admin);
 
     /**
-     * 通过id删除
+     * 通过id删除管理员
      *
      * @param id 管理员id
      * @return 影响的行数
      */
     int deleteById(Long id);
+
+    /**
+     * 通过id更新管理员
+     *
+     * @param admin 管理员
+     * @return int
+     */
+    int updateById(Admin admin);
 
     /**
      * 通过用户名查找
@@ -42,6 +50,14 @@ public interface AdminMapper {
      * @return
      */
     int countByPhone(String phone);
+
+    /**
+     * 通过用户名查找
+     *
+     * @param email
+     * @return int
+     */
+    int countByEmail(String email);
 
     /**
      * 获取管理员数据

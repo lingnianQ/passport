@@ -27,7 +27,7 @@ public class AdminController {
     private IAdminService adminService;
 
     @ApiOperation("添加管理员")
-    @ApiOperationSupport(order = 100)
+    @ApiOperationSupport(order = 1)
     @PostMapping("/add-new")
     public JsonResult<Void> addNew(@RequestBody AdminAddNewDTO adminAddNewDTO) {
         log.info("开始添加用户数据");
@@ -48,10 +48,14 @@ public class AdminController {
         return JsonResult.ok(message);
     }
 
+    @ApiOperation("查询管理员列表")
+    @ApiOperationSupport(order = 3)
     @GetMapping("")
-    public JsonResult<List<AdminListItemVO>> select() {
+    @PostMapping("")
+    public JsonResult<List<AdminListItemVO>> list() {
         String message = "开始查询管理员列表";
         log.debug(message);
-        return JsonResult.ok(adminService.list(), message);
+        List<AdminListItemVO> adminList = adminService.list();
+        return JsonResult.ok(adminList, message);
     }
 }
