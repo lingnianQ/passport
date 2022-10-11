@@ -27,6 +27,7 @@ class IAdminServiceTest {
         Long[] roleIds = {12L, 54L, 44L};
         AdminAddNewDTO adminAddNewDTO = AdminAddNewDTO.builder()
                 .username("Q.1")
+                .password("123456")
                 .phone("16605523666")
                 .email("1232@qq.com")
                 .roleIds(roleIds)

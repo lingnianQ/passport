@@ -13,6 +13,8 @@ import com.syt.passport.web.ServiceCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +36,8 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private AdminRoleMapper adminRoleMapper;
 
+//    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void addNew(AdminAddNewDTO adminAddNewDTO) {
@@ -82,7 +86,12 @@ public class AdminServiceImpl implements IAdminService {
 
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminAddNewDTO, admin);
-        // TODO 从Admin对象中取出密码，进行加密处理，并将密文封装回Admin对象中
+
+        log.debug("从Admin对象中取出密码，进行加密处理，并将密文封装回Admin对象中");
+        String rawPassword = admin.getPassword();
+        String encodePassword = passwordEncoder.encode(rawPassword);
+        admin.setPassword(encodePassword);
+
         admin.setLoginCount(0);
         log.debug("开始插入管理员: {}", admin);
         int rows = adminMapper.insert(admin);

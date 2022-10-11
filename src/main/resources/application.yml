@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: pro
   jackson:
     default-property-inclusion: non_null
 mybatis:
