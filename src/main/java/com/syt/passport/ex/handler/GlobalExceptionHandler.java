@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(
             {
                     InternalAuthenticationServiceException.class,
-                    BadCredentialsException.class,
+                    BadCredentialsException.class
             }
     )
     public JsonResult<Void> handlerInternalAuthenticationServiceException(AuthenticationException e) {
