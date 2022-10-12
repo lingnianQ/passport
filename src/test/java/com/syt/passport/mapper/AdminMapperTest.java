@@ -1,6 +1,7 @@
 package com.syt.passport.mapper;
 
 import com.syt.passport.pojo.entity.Admin;
+import com.syt.passport.pojo.vo.AdminLoginInfoVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,4 +91,9 @@ class AdminMapperTest {
         }
     }
 
+    @Test
+    void getLoginInfoByUsername() {
+        AdminLoginInfoVO root = adminMapper.getLoginInfoByUsername("root");
+        System.out.println("root = " + root);
+    }
 }

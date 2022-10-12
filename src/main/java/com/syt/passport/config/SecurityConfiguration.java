@@ -20,8 +20,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      @Bean
     public PasswordEncoder passwordEncoder() {
         log.debug("创建@Bean方法定义的对象：PasswordEncoder");
-//        return new BCryptPasswordEncoder();
-        return NoOpPasswordEncoder.getInstance();//无操作的密码编码器
+        return new BCryptPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance();//无操作的密码编码器
     }
 
     @Override

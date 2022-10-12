@@ -123,4 +123,24 @@
         ORDER BY enable desc, id
     </select>
 
+    <!--    * 管理员登录-->
+    <!--    AdminLoginInfoVO getLoginInfoByUsername(String name);-->
+    <select id="getLoginInfoByUsername" resultMap="LoginResultMap">
+        SELECT
+        <include refid="LoginSql"/>
+        FROM ams_admin
+        WHERE username=#{username}
+    </select>
+    <sql id="LoginSql">
+        <if test="true">
+            id, username, password, enable
+        </if>
+    </sql>
+    <resultMap id="LoginResultMap" type="AdminLoginInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enable" property="enable"/>
+    </resultMap>
+
 </mapper>
