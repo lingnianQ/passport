@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public JsonResult handleBindException(BindException e) {
+    public JsonResult<Void> handleBindException(BindException e) {
         log.debug("捕获到BindException：{}", e.getMessage());
         // 以下2行代码，如果有多种错误时，将随机获取其中1种错误的信息，并响应
         // 当配置了“快速失败”后，Spring Validation检查永远最多只有1种错误
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public JsonResult handleConstraintViolationException(ConstraintViolationException e) {
+    public JsonResult<Void> handleConstraintViolationException(ConstraintViolationException e) {
         log.debug("捕获到ConstraintViolationException：{}", e.getMessage());
         StringBuilder stringBuilder = new StringBuilder();
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
