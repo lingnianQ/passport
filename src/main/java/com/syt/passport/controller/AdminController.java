@@ -2,6 +2,7 @@ package com.syt.passport.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
+import com.syt.passport.pojo.dto.AdminLoginDTO;
 import com.syt.passport.pojo.vo.AdminListItemVO;
 import com.syt.passport.service.IAdminService;
 import com.syt.passport.web.JsonResult;
@@ -25,6 +26,15 @@ public class AdminController {
 
     @Autowired
     private IAdminService adminService;
+
+    @ApiOperation("登录")
+    @ApiOperationSupport(order = 1)
+    @PostMapping("/login")
+    public JsonResult<Void> login(AdminLoginDTO adminLoginDTO) {
+        log.debug("开始处理【管理员登录】的请求，参数：{}", adminLoginDTO);
+        adminService.login(adminLoginDTO);
+        return JsonResult.ok();
+    }
 
     @ApiOperation("添加管理员")
     @ApiOperationSupport(order = 1)

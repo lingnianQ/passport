@@ -4,6 +4,7 @@ import com.syt.passport.mapper.AdminMapper;
 import com.syt.passport.pojo.vo.AdminLoginInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,20 +29,21 @@ public class UserDetailsServicesImpl implements UserDetailsService {
         log.debug("Spring Security调用了loadUserByUsername()方法，参数：{}", s);
         AdminLoginInfoVO loginInfo = adminMapper.getLoginInfoByUsername(s);
         log.debug("loginInfo查询到数据: {}", loginInfo);
-        // 暂时使用模拟数据来处理登录认证，假设正确的用户名和密码分别是root和123456
-        if (loginInfo != null) {
-            UserDetails userDetails = User.builder()
-                    .username(loginInfo.getUsername())
-                    .password(loginInfo.getPassword())
-                    .accountExpired(false)
-                    .accountLocked(false)
-                    .disabled(loginInfo.getEnable() == 0)
-                    .authorities("root权限标识")
-                    .build();
-            log.debug("即将向Spring Security返回UserDetails对象：{}", userDetails);
-            return userDetails;
+        if (loginInfo == null) {
+            log.debug("此用户名【{}】不存在，即将抛出异常", s);
+            String message = "登录失败，用户名不存在！";
+            throw new BadCredentialsException(message);
         }
-        log.debug("此用户不存在：{}", s);
-        return null;
+
+        UserDetails userDetails = User.builder()
+                .username(loginInfo.getUsername())
+                .password(loginInfo.getPassword())
+                .accountExpired(false)
+                .accountLocked(false)
+                .disabled(loginInfo.getEnable() == 0)
+                .authorities("root权限标识")
+                .build();
+        log.debug("即将向Spring Security返回UserDetails对象：{}", userDetails);
+        return userDetails;
     }
 }

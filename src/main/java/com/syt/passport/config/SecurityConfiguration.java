@@ -3,6 +3,7 @@ package com.syt.passport.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +25,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //        return NoOpPasswordEncoder.getInstance();//无操作的密码编码器
     }
 
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+         log.debug("创建@Bean方法定义的对象: AuthenticationManager..");
+        return super.authenticationManager();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // 【配置白名单】
@@ -39,6 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/swagger-resources",
                 "/v2/api-docs",
                 "/favicon.ico",
+                "/admins/login",
         };
 
         http.csrf().disable(); //CSRF防止伪造跨域攻击
@@ -49,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest() // 除以上配置过的请求路径以外的所有请求路径
                 .authenticated(); // 要求是已经通过认证的
 
-        http.formLogin();//开启表单验证,未认证时,重定向到登录表单
+//        http.formLogin();//开启表单验证,未认证时,重定向到登录表单
 
     }
 }

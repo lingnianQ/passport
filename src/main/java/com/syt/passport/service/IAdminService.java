@@ -1,6 +1,7 @@
 package com.syt.passport.service;
 
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
+import com.syt.passport.pojo.dto.AdminLoginDTO;
 import com.syt.passport.pojo.vo.AdminListItemVO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,14 @@ import java.util.List;
  */
 @Transactional
 public interface IAdminService {
+
+    /**
+     * 管理员登录
+     *
+     * @param adminLoginDTO 封装了管理员的登录信息的对象
+     */
+    void login(AdminLoginDTO adminLoginDTO);
+
     /**
      * 添加新用户
      *
