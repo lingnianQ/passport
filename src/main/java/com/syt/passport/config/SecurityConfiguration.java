@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-     @Bean
+    @Bean
     public PasswordEncoder passwordEncoder() {
         log.debug("创建@Bean方法定义的对象：PasswordEncoder");
         return new BCryptPasswordEncoder();
@@ -31,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
-         log.debug("创建@Bean方法定义的对象: AuthenticationManager..");
+        log.debug("创建@Bean方法定义的对象: AuthenticationManager..");
         return super.authenticationManager();
     }
 
@@ -55,9 +55,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable(); //CSRF防止伪造跨域攻击
 
+        // 允许跨域访问
+        http.cors(); // 激活Spring Security框架内置的一个CorsFilter，允许跨域访问
+
         http.authorizeRequests() // 对请求执行认证与授权
                 .antMatchers(urls) // 匹配某些请求路径
                 .permitAll() // （对此前匹配的请求路径）不需要通过认证即允许访问
+                // .antMatchers(HttpMethod.OPTIONS,"/**")
+                // .permitAll()
                 .anyRequest() // 除以上配置过的请求路径以外的所有请求路径
                 .authenticated(); // 要求是已经通过认证的
 
