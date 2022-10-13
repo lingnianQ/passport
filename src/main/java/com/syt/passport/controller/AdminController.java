@@ -4,13 +4,16 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
 import com.syt.passport.pojo.dto.AdminLoginDTO;
 import com.syt.passport.pojo.vo.AdminListItemVO;
+import com.syt.passport.security.LoginPrincipal;
 import com.syt.passport.service.IAdminService;
 import com.syt.passport.web.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -33,7 +36,9 @@ public class AdminController {
     public JsonResult<String> login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理【管理员登录】的请求，参数：{}", adminLoginDTO);
         String jwt = adminService.login(adminLoginDTO);
-        return JsonResult.ok(jwt);
+        String message = "登陆成功";
+        log.debug(message);
+        return JsonResult.ok(jwt, message);
     }
 
     @ApiOperation("添加管理员")
@@ -50,8 +55,10 @@ public class AdminController {
     @ApiOperation("删除管理员")
     @ApiOperationSupport(order = 2)
     @GetMapping("/delById/{id:[0-9]+}")
-    public JsonResult<Void> deleteById(@PathVariable Long id) {
-        log.debug("开始处理删除deleteById: {}", id);
+    public JsonResult<Void> deleteById(@PathVariable Long id,
+                                       @ApiIgnore @AuthenticationPrincipal LoginPrincipal loginPrincipal) {
+        log.debug("开始处理【删除管理员】的请求，参数：{}", id);
+        log.debug("当前登录的当事人：{}", loginPrincipal);
         adminService.deleteById(id);
         String message = "删除管理员成功";
         log.debug(message);

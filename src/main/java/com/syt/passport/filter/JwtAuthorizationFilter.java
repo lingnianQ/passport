@@ -1,6 +1,7 @@
 package com.syt.passport.filter;
 
 import com.syt.passport.ex.ServiceException;
+import com.syt.passport.security.LoginPrincipal;
 import com.syt.passport.web.ServiceCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -64,8 +65,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         List<GrantedAuthority> authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority("root权限标识");
         authorities.add(authority);
+        LoginPrincipal loginPrincipal = new LoginPrincipal();
+        loginPrincipal.setId(id);
+        loginPrincipal.setUsername(username);
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username, null, authorities
+                loginPrincipal, null, authorities
         );
 
         //将认证信息存储到SecurityContext中

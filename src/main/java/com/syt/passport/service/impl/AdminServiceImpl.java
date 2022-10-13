@@ -55,13 +55,14 @@ public class AdminServiceImpl implements IAdminService {
                 adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
         Authentication authenticateResult
                 = authenticationManager.authenticate(authentication);
+
         log.debug("执行认证成功authenticateResult = {}", authenticateResult);
         Object principal = authenticateResult.getPrincipal();
         log.debug("认证结果中的Principal数据类型：{}", principal.getClass().getName());
         log.debug("认证结果中的Principal数据：{}", principal);
 
         AdminDetails adminDetails = (AdminDetails) principal;
-        log.debug("user = {}", adminDetails);
+        log.debug("user-adminDetails = {}", adminDetails);
 
         log.debug("准备生成JWT数据");
         Map<String, Object> claims = new HashMap<>();
