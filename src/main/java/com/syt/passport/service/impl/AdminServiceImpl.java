@@ -9,6 +9,7 @@ import com.syt.passport.pojo.entity.Admin;
 import com.syt.passport.pojo.entity.AdminRole;
 import com.syt.passport.pojo.vo.AdminListItemVO;
 import com.syt.passport.pojo.vo.AdminStandardVO;
+import com.syt.passport.security.AdminDetails;
 import com.syt.passport.service.IAdminService;
 import com.syt.passport.web.ServiceCode;
 import io.jsonwebtoken.Jwts;
@@ -59,13 +60,13 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("认证结果中的Principal数据类型：{}", principal.getClass().getName());
         log.debug("认证结果中的Principal数据：{}", principal);
 
-        User user = (User) principal;
-        log.debug("user = {}", user);
+        AdminDetails adminDetails = (AdminDetails) principal;
+        log.debug("user = {}", adminDetails);
 
         log.debug("准备生成JWT数据");
         Map<String, Object> claims = new HashMap<>();
-        // claims.put("id", null); // 向JWT中封装id
-        claims.put("username", user.getUsername()); // 向JWT中封装username
+        claims.put("id", adminDetails.getId()); // 向JWT中封装id
+        claims.put("username", adminDetails.getUsername()); // 向JWT中封装username
 
         String secretKey = "qweqweqweasdxczxsdfsf{}sds[a]sd";
         Date expirationDate = new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000);

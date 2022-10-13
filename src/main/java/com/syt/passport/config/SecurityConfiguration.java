@@ -1,6 +1,8 @@
 package com.syt.passport.config;
 
+import com.syt.passport.filter.JwtAuthorizationFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author sytsnb@gmail.com
@@ -60,5 +63,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 //        http.formLogin();//开启表单验证,未认证时,重定向到登录表单
 
+
+        // 将自定义的JWT过滤器添加在Spring Security框架内置的过滤器之前
+        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+    @Autowired
+    private JwtAuthorizationFilter jwtAuthorizationFilter;
 }
