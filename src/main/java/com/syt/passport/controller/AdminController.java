@@ -32,8 +32,8 @@ public class AdminController {
     @PostMapping("/login")
     public JsonResult<Void> login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理【管理员登录】的请求，参数：{}", adminLoginDTO);
-        adminService.login(adminLoginDTO);
-        return JsonResult.ok();
+        String jwt = adminService.login(adminLoginDTO);
+        return JsonResult.ok(jwt);
     }
 
     @ApiOperation("添加管理员")

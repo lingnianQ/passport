@@ -11,19 +11,20 @@ import com.syt.passport.pojo.vo.AdminListItemVO;
 import com.syt.passport.pojo.vo.AdminStandardVO;
 import com.syt.passport.service.IAdminService;
 import com.syt.passport.web.ServiceCode;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author sytsnb@gmail.com
@@ -46,13 +47,37 @@ public class AdminServiceImpl implements IAdminService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public void login(AdminLoginDTO adminLoginDTO) {
+    public String login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理【管理员登录】的业务，参数：{}", adminLoginDTO);
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
                 adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
-        authenticationManager.authenticate(authentication);
-        log.debug("执行认证成功");
+        Authentication authenticateResult
+                = authenticationManager.authenticate(authentication);
+        log.debug("执行认证成功authenticateResult = {}", authenticateResult);
+        Object principal = authenticateResult.getPrincipal();
+        log.debug("认证结果中的Principal数据类型：{}", principal.getClass().getName());
+        log.debug("认证结果中的Principal数据：{}", principal);
+
+        User user = (User) principal;
+        log.debug("user = {}", user);
+
+        log.debug("准备生成JWT数据");
+        Map<String, Object> claims = new HashMap<>();
+        // claims.put("id", null); // 向JWT中封装id
+        claims.put("username", user.getUsername()); // 向JWT中封装username
+
+        String secretKey = "qweqweqweasdxczxsdfsf{}sds[a]sd";
+        Date expirationDate = new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000);
+        String jwt = Jwts.builder()
+                .setHeaderParam("alg", "HS256")
+                .setHeaderParam("typ", "JWT")
+                .setClaims(claims)
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        log.debug("返回JWT数据: {}", jwt);
+        return jwt;
     }
 
     @Override

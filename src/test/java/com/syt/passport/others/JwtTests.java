@@ -20,7 +20,7 @@ public class JwtTests {
         claims.put("username", "liucangsong");
         claims.put("email", "liucangsong@163.com");
 
-        Date expirationDate = new Date(System.currentTimeMillis() + 10 * 60 * 1000);
+        Date expirationDate = new Date(System.currentTimeMillis() + 10 * 60 * 60 * 24 * 1000);
         System.out.println("过期时间：" + expirationDate);
 
         String jwt = Jwts.builder()

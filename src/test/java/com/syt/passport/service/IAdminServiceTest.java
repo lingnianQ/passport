@@ -1,6 +1,7 @@
 package com.syt.passport.service;
 
 import com.syt.passport.pojo.dto.AdminAddNewDTO;
+import com.syt.passport.pojo.dto.AdminLoginDTO;
 import com.syt.passport.pojo.entity.AdminRole;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,20 @@ class IAdminServiceTest {
 
     @Autowired
     private IAdminService adminService;
+
+    @Test
+    void testLogin() {
+        log.debug("testLogin---测试开始");
+        {
+            AdminLoginDTO adminLoginDTO = AdminLoginDTO.builder()
+                    .username("root")
+                    .password("123456")
+                    .build();
+            String jwt = adminService.login(adminLoginDTO);
+//            System.out.println("jwt = " + jwt);
+        }
+        log.debug("testLogin---测试结束");
+    }
 
     @Test
     void testAddNew() {
@@ -44,4 +59,6 @@ class IAdminServiceTest {
     void deleteById() {
         adminService.deleteById(35L);
     }
+
+
 }
