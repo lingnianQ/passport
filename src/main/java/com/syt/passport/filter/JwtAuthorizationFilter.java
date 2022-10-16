@@ -62,6 +62,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 设置响应的文档类型
         response.setContentType("application/json; charset=utf-8");
+
         log.debug("将尝试解析JWT……");
         Claims claims = null;
         try {
