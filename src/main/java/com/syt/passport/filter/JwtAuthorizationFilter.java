@@ -40,8 +40,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String jwt = request.getHeader("Authorization");
+        // 清除SecurityContext中原有的数据（认证信息）
+        SecurityContextHolder.clearContext();
 
+        //尝试获取客户端请求时可能携带的JWT
+        String jwt = request.getHeader("Authorization");
         log.debug("接收到JWT数据：{}", jwt);
 
         //判断是否 接收到 有效的jwt数据
@@ -73,8 +76,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         );
 
         //将认证信息存储到SecurityContext中
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        securityContext.setAuthentication(authentication);
 
         //放行
         filterChain.doFilter(request, response);
