@@ -6,6 +6,7 @@ import com.syt.passport.web.ServiceCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,9 @@ import java.util.List;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    @Value("${passport.jwt.secretKey}")
+    String secretKey;
+
     public static final int JWT_MIN_LENGTH = 100;
 
 
@@ -57,7 +61,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         log.debug("尝试解析JWT...");
-        String secretKey = "qweqweqweasdxczxsdfsf{}sds[a]sd";
         Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt).getBody();
         Long id = claims.get("id", Long.class);
         String username = claims.get("username", String.class);

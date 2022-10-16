@@ -17,6 +17,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,6 +48,9 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Value("${passport.jwt.secret-key}")
+    private String secretKey;
+
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理【管理员登录】的业务，参数：{}", adminLoginDTO);
@@ -69,7 +73,6 @@ public class AdminServiceImpl implements IAdminService {
         claims.put("id", adminDetails.getId()); // 向JWT中封装id
         claims.put("username", adminDetails.getUsername()); // 向JWT中封装username
 
-        String secretKey = "qweqweqweasdxczxsdfsf{}sds[a]sd";
         Date expirationDate = new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000);
         String jwt = Jwts.builder()
                 .setHeaderParam("alg", "HS256")
