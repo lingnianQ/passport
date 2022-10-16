@@ -41,23 +41,16 @@ public class UserDetailsServicesImpl implements UserDetailsService {
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("root权限标识");
-        authorities.add(authority);
+        for (String permission : loginInfo.getPermissions()) {
+            GrantedAuthority authority = new SimpleGrantedAuthority(permission);
+            authorities.add(authority);
+        }
 
         AdminDetails adminDetails = new AdminDetails(
                 loginInfo.getUsername(), loginInfo.getPassword(),
                 loginInfo.getEnable() == 1, authorities
         );
         adminDetails.setId(loginInfo.getId());
-
-/*        UserDetails userDetails = User.builder()
-                .username(loginInfo.getUsername())
-                .password(loginInfo.getPassword())
-                .accountExpired(false)
-                .accountLocked(false)
-                .disabled(loginInfo.getEnable() == 0)
-                .authorities("root权限标识")
-                .build();*/
 
         log.debug("即将向Spring Security返回UserDetails对象：{}", adminDetails);
         return adminDetails;

@@ -1,5 +1,6 @@
 package com.syt.passport.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.syt.passport.ex.ServiceException;
 import com.syt.passport.mapper.AdminMapper;
 import com.syt.passport.mapper.AdminRoleMapper;
@@ -70,11 +71,12 @@ public class AdminServiceImpl implements IAdminService {
         AdminDetails adminDetails = (AdminDetails) principal;
         log.debug("user-adminDetails = {}", adminDetails);
 
-        //向jwt数据中封装信息,,// 向JWT中封装id,,// 向JWT中封装username
+        //向jwt数据中封装信息,,// 向JWT中封装id,,// 向JWT中封装username// 向JWT中封装权限
         log.debug("准备生成JWT数据");
         Map<String, Object> claims = new HashMap<>(2);
         claims.put("id", adminDetails.getId());
         claims.put("username", adminDetails.getUsername());
+        claims.put("authorities", JSON.toJSONString(adminDetails.getAuthorities()));
 
         Date expirationDate = new Date(System.currentTimeMillis() + durationInMinute * 60 * 1000);
         String jwt = Jwts.builder()

@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -44,6 +45,7 @@ public class AdminController {
     @ApiOperation("添加管理员")
     @ApiOperationSupport(order = 1)
     @PostMapping("/add-new")
+    @PreAuthorize("hasAuthority('/ams/admin/add-new')")
     public JsonResult<Void> addNew(@RequestBody AdminAddNewDTO adminAddNewDTO) {
         log.info("开始添加用户数据");
         adminService.addNew(adminAddNewDTO);
@@ -89,8 +91,8 @@ public class AdminController {
 
     @ApiOperation("查询管理员列表")
     @ApiOperationSupport(order = 5)
-//    @GetMapping("")
     @PostMapping("")
+    @PreAuthorize("hasAuthority('/ams/admin/read')")
     public JsonResult<List<AdminListItemVO>> list() {
         String message = "开始查询管理员列表";
         log.debug(message);

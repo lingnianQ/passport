@@ -104,13 +104,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // 从JWT中获取用户的相关数据，例如id、username等
         Long id = claims.get("id", Long.class);
         String username = claims.get("username", String.class);
+        String authoritiesJsonString = claims.get("authorities", String.class);
         log.debug("从JWT中解析得到数据：id={}", id);
         log.debug("从JWT中解析得到数据：username={}", username);
+        log.debug("从JWT中解析得到数据：authoritiesJsonString={}", authoritiesJsonString);
 
         // 准备用于创建认证信息的权限数据
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("root权限标识");
-        authorities.add(authority);
+        List<SimpleGrantedAuthority> authorities
+                = JSON.parseArray(authoritiesJsonString, SimpleGrantedAuthority.class);
 
         // 准备用于创建认证信息的当事人数据
         LoginPrincipal loginPrincipal = new LoginPrincipal();
@@ -122,7 +123,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 loginPrincipal, null, authorities
         );
 
-        //将认证信息存储到SecurityContext中
+        // 将认证信息存储到SecurityContext中
+        log.debug("即将向SecurityContext中存入认证信息：{}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
