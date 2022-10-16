@@ -34,7 +34,7 @@ import java.util.List;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    @Value("${passport.jwt.secretKey}")
+    @Value("${passport.jwt.secret-key}")
     String secretKey;
 
     public static final int JWT_MIN_LENGTH = 100;
