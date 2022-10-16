@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -51,6 +50,9 @@ public class AdminServiceImpl implements IAdminService {
     @Value("${passport.jwt.secret-key}")
     private String secretKey;
 
+    @Value("${passport.jwt.duration-in-minute}")
+    private Long durationInMinute;
+
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理【管理员登录】的业务，参数：{}", adminLoginDTO);
@@ -68,12 +70,13 @@ public class AdminServiceImpl implements IAdminService {
         AdminDetails adminDetails = (AdminDetails) principal;
         log.debug("user-adminDetails = {}", adminDetails);
 
+        //向jwt数据中封装信息,,// 向JWT中封装id,,// 向JWT中封装username
         log.debug("准备生成JWT数据");
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", adminDetails.getId()); // 向JWT中封装id
-        claims.put("username", adminDetails.getUsername()); // 向JWT中封装username
+        Map<String, Object> claims = new HashMap<>(2);
+        claims.put("id", adminDetails.getId());
+        claims.put("username", adminDetails.getUsername());
 
-        Date expirationDate = new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000);
+        Date expirationDate = new Date(System.currentTimeMillis() + durationInMinute * 60 * 1000);
         String jwt = Jwts.builder()
                 .setHeaderParam("alg", "HS256")
                 .setHeaderParam("typ", "JWT")

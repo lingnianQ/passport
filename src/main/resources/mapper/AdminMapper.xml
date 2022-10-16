@@ -8,11 +8,13 @@
         insert into ams_admin (username, password, nickname,
                                avatar, phone, email,
                                description, enable,
-                               last_login_ip, login_count)
+                               last_login_ip, login_count,
+                               gmt_last_login)
         VALUES (#{username}, #{password}, #{nickname},
                 #{avatar}, #{phone}, #{email},
                 #{description}, #{enable},
-                #{lastLoginIp}, #{loginCount})
+                #{lastLoginIp}, #{loginCount},
+                #{gmtLastLogin})
     </insert>
 
 
@@ -72,14 +74,14 @@
         WHERE username = #{username}
     </select>
 
-    <!--    int countByEmail(String name);-->
+    <!--    int countByEmail(String email);-->
     <select id="countByEmail" resultType="int">
         select COUNT(*)
         FROM ams_admin
         WHERE email = #{email}
     </select>
 
-    <!--    int countByPhone(String name);-->
+    <!--    int countByPhone(String phone);-->
     <select id="countByPhone" resultType="int">
         select COUNT(*)
         FROM ams_admin
@@ -118,29 +120,54 @@
                description,
                enable,
                last_login_ip,
-               login_count
+               login_count,
+               gmt_last_login
         FROM ams_admin
         ORDER BY enable desc, id
     </select>
 
     <!--    * 管理员登录-->
-    <!--    AdminLoginInfoVO getLoginInfoByUsername(String name);-->
+    <!-- AdminLoginInfoVO getLoginInfoByUsername(String username); -->
     <select id="getLoginInfoByUsername" resultMap="LoginResultMap">
         SELECT
-        <include refid="LoginSql"/>
-        FROM ams_admin
-        WHERE username=#{username}
+        <include refid="LoginQueryFields"/>
+        FROM
+        ams_admin
+        LEFT JOIN ams_admin_role ON ams_admin.id=ams_admin_role.admin_id
+        LEFT JOIN ams_role_permission ON ams_admin_role.role_id=ams_role_permission.role_id
+        LEFT JOIN ams_permission ON ams_role_permission.permission_id=ams_permission.id
+        WHERE
+        username=#{username}
     </select>
-    <sql id="LoginSql">
+
+    <sql id="LoginQueryFields">
         <if test="true">
-            id, username, password, enable
+            ams_admin.id,
+            ams_admin.username,
+            ams_admin.password,
+            ams_admin.enable,
+            ams_permission.value
         </if>
     </sql>
+
+
+    <!-- 当涉及1个多查询时，需要使用collection标签配置List集合类型的属性 -->
+    <!-- collection标签的property属性：类中List集合的属性的名称 -->
+    <!-- collection标签的ofType属性：类中List集合的元素类型的全限定名 -->
+    <!-- collection标签的子级：需要配置如何创建出一个个元素对象 -->
+    <!-- constructor标签：将通过构造方法来创建对象 -->
+    <!-- constructor标签子级的arg标签：配置构造方法的参数 -->
     <resultMap id="LoginResultMap" type="AdminLoginInfoVO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="enable" property="enable"/>
+        <collection property="permissions" ofType="java.lang.String">
+            <constructor>
+                <arg column="value"/>
+            </constructor>
+        </collection>
     </resultMap>
+
 
 </mapper>

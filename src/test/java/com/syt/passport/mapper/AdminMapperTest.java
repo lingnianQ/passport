@@ -93,7 +93,7 @@ class AdminMapperTest {
 
     @Test
     void getLoginInfoByUsername() {
-        AdminLoginInfoVO root = adminMapper.getLoginInfoByUsername("root");
+        AdminLoginInfoVO root = adminMapper.getLoginInfoByUsername("fanchuanqi");
         System.out.println("root = " + root);
     }
 }

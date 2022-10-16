@@ -30,7 +30,4 @@ public class Admin implements Serializable {
   private String lastLoginIp;
   private Integer loginCount;
   private LocalDateTime gmtLastLogin;
-  private LocalDateTime gmtCreate;
-  private LocalDateTime gmtModified;
-
 }
