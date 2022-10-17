@@ -8,6 +8,7 @@ import com.syt.passport.security.LoginPrincipal;
 import com.syt.passport.service.IAdminService;
 import com.syt.passport.web.JsonResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class AdminController {
     @Autowired
     private IAdminService adminService;
 
-    @ApiOperation("登录")
+    @ApiOperation("管理员登录")
     @ApiOperationSupport(order = 1)
     @PostMapping("/login")
     public JsonResult<String> login(AdminLoginDTO adminLoginDTO) {
@@ -56,7 +57,9 @@ public class AdminController {
 
     @ApiOperation("删除管理员")
     @ApiOperationSupport(order = 2)
+    @ApiImplicitParam(name = "id", value = "管理员id", required = true, dataType = "long")
     @GetMapping("/delById/{id:[0-9]+}")
+    @PreAuthorize("hasAuthority('/ams/admin/delete')")
     public JsonResult<Void> deleteById(@PathVariable Long id,
                                        @ApiIgnore @AuthenticationPrincipal LoginPrincipal loginPrincipal) {
         log.debug("开始处理【删除管理员】的请求，参数：{}", id);
@@ -70,6 +73,7 @@ public class AdminController {
     @ApiOperation("启用管理员")
     @ApiOperationSupport(order = 3)
     @GetMapping("/{id:[0-9]+}/enable")
+    @PreAuthorize("hasAuthority('/ams/admin/update')")
     public JsonResult<Void> setEnable(@PathVariable Long id) {
         log.debug("开始处理setEnable: {}", id);
         adminService.setEnable(id);
@@ -81,6 +85,7 @@ public class AdminController {
     @ApiOperation("禁用管理员")
     @ApiOperationSupport(order = 4)
     @GetMapping("/{id:[0-9]+}/disable")
+    @PreAuthorize("hasAuthority('/ams/admin/update')")
     public JsonResult<Void> setDisable(@PathVariable Long id) {
         log.debug("开始处理setDisable: {}", id);
         adminService.setDisable(id);

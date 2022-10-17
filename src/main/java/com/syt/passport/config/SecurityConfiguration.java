@@ -10,11 +10,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
+ * Spring Security的配置类
+ *
  * @author sytsnb@gmail.com
  * @Date 2022 2022/10/11 15:07
  */
@@ -61,7 +62,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors(); // 激活Spring Security框架内置的一个CorsFilter，允许跨域访问
 
         http.authorizeRequests() // 对请求执行认证与授权
-                .antMatchers(urls) // 匹配某些请求路径
+//                .antMatchers(urls) // 匹配某些请求路径,必须严格匹配路径
+                .mvcMatchers(urls) //匹配某些请求路径，匹配路径时不关心扩展名，例如配置的路径是 /admin，则可以匹配上 /admin、/admin.html、/admin.jpg
                 .permitAll() // （对此前匹配的请求路径）不需要通过认证即允许访问
                 // .antMatchers(HttpMethod.OPTIONS,"/**")
                 // .permitAll()

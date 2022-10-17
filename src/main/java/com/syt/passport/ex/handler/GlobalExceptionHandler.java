@@ -4,6 +4,7 @@ import com.syt.passport.ex.ServiceException;
 import com.syt.passport.web.JsonResult;
 import com.syt.passport.web.ServiceCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -85,12 +86,14 @@ public class GlobalExceptionHandler {
 
     }
 
-//    @ExceptionHandler
-//    public JsonResult<Void> handlerBadCredentialsException(BadCredentialsException e) {
-//        log.debug("捕获BadCredentialsException: {}", e.getMessage());
-//        return JsonResult.fail(ServiceCode.ERR_UNAUTHORIZED.getValue(), MESSAGE_UNAUTHORIZED);
-//    }
-//
+
+    @ExceptionHandler
+    public JsonResult<Void> handlerAccessDeniedException(AccessDeniedException e) {
+        log.debug("处理{}: 异常信息: {}", e.getClass().getName(), e.getMessage());
+        String message = "请求失败，当前登录的账号不具备此操作权限！";
+        return JsonResult.fail(ServiceCode.ERR_FORBIDDEN.getValue(), message);
+    }
+
     @ExceptionHandler
     public JsonResult<Void> handlerDisabledException(DisabledException e) {
         log.debug("捕获DisabledException: {}", e.getMessage());
